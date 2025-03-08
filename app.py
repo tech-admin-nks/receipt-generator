@@ -124,7 +124,14 @@ def login():
             st.error("Invalid Username or Password")
 
 def main():
-    st.title("Receipt Generator")
+    if "authenticated" not in st.session_state:
+        st.session_state["authenticated"] = False
+
+    if not st.session_state["authenticated"]:
+        login()
+        return
+
+    st.title("🧾Receipt Generator")
     
     receipt_number = datetime.now().strftime("%Y%m%d%H%M") 
     student_name = st.text_input("Student Name", "")
