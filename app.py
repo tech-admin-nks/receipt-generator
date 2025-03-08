@@ -6,7 +6,7 @@ from reportlab.lib.utils import ImageReader
 from io import BytesIO
 import datetime
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import dropbox
 
@@ -151,7 +151,13 @@ def main():
     
     receipt_number = datetime.now().strftime("%Y%m%d%H%M") 
     student_name = st.text_input("Student Name", "")
-    date = datetime.today().strftime("%d/%m/%Y")
+    # Get current time in UTC
+    utc_now = datetime.utcnow()
+
+    # Add 5 hours 30 minutes to convert UTC → IST
+    ist_now = utc_now + timedelta(hours=5, minutes=30)
+
+    date = ist_now.strftime("%d/%m/%Y %H:%M:%S") #datetime.today().strftime("%d/%m/%Y")
     amount_paid = st.number_input("Amount Paid", min_value=0.0, value=0.0)
     
     fee_type = st.selectbox("Type of Fees", ["Tuition Fee", "Admission Fee"])
