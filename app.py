@@ -8,6 +8,7 @@ import datetime
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import dropbox
 
 # Load environment variables
 load_dotenv()
@@ -15,12 +16,27 @@ load_dotenv()
 # Fetch credentials from environment variables
 VALID_USERNAME = os.getenv("APP_USERNAME")
 VALID_PASSWORD = os.getenv("APP_PASSWORD")
+DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_ACCESS_TOKEN")
+
 data_file = "receipts.csv"
 
+def upload_to_dropbox(file_bytes, dropbox_path):
+    """Uploads a file to Dropbox"""
+    dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+
+    try:
+        dbx.files_upload(file_bytes.getvalue(), dropbox_path, mode=dropbox.files.WriteMode("overwrite"))
+        shared_link = dbx.sharing_create_shared_link(dropbox_path).url
+        return shared_link  # Return Dropbox file link
+    except Exception as e:
+        print(f"Dropbox Upload Error: {e}")
+        return None
+        
 def save_to_csv(data):
     df = pd.DataFrame([data])
     if not os.path.exists(data_file):
         df.to_csv(data_file, index=False)
+        
     else:
         df.to_csv(data_file, mode='a', header=False, index=False)
 
@@ -95,18 +111,18 @@ def generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, 
 
     # Save PDF in structured folders
     year_month = datetime.now().strftime("%Y/%m")  #datetime.datetime.today().strftime("%Y/%m")
-    directory = os.path.join("receipts", year_month)
-    os.makedirs(directory, exist_ok=True)  # Create folder if not exists
     date = datetime.today().strftime("%d.%m.%Y")
-    filename = f"{student_name}_{fee_type.replace(' ', '_')}_{date}.pdf"
-    pdf_path = os.path.join(directory, filename)
+    filename = f"/receipts/{year_month}/{student_name}_{fee_type.replace(' ', '_')}_{date}.pdf"
     
     # Save to file
     c.save()
-    with open(pdf_path, "wb") as f:
-        f.write(buffer.getvalue())
+    #with open(pdf_path, "wb") as f:
+    #    f.write(buffer.getvalue())
 
     buffer.seek(0)
+    # Upload to Dropbox
+    dropbox_filename = filename
+    dropbox_link = upload_to_dropbox(buffer, dropbox_filename)
     return buffer
 
 # User Authentication Function
