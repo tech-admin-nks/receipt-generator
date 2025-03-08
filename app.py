@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Fetch credentials from environment variables
-VALID_USERNAME = os.getenv("APP_USERNAME", "admin")
-VALID_PASSWORD = os.getenv("APP_PASSWORD", "nks2024")
+VALID_USERNAME = os.getenv("APP_USERNAME")
+VALID_PASSWORD = os.getenv("APP_PASSWORD")
 
 # CSV File for storing records
 data_file = "receipts.csv"
