@@ -123,7 +123,7 @@ def generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, 
     # Upload to Dropbox
     dropbox_filename = filename
     dropbox_link = upload_to_dropbox(buffer, dropbox_filename)
-    return buffer
+    return buffer,dropbox_link  
 
 # User Authentication Function
 def login():
@@ -172,7 +172,13 @@ def main():
                 "Month": month if fee_type == "Tuition Fee" else ""
             }
             save_to_csv(data)
-            pdf_buffer = generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, month, logo_path)
+            pdf_buffer,dropbox_link  = generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, month, logo_path)
+            if dropbox_link:
+                st.success("Receipt generated successfully!")
+                st.markdown(f"[Download from Dropbox]({dropbox_link})")
+            else:
+                st.error("Failed to upload receipt to Dropbox.")
+            
             st.download_button("Download Receipt", pdf_buffer, file_name=f"{student_name}_{fee_type}_{date}.pdf", mime="application/pdf")
         else:
             st.error("Please fill all required fields.")
