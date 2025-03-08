@@ -119,7 +119,7 @@ def login():
     if st.button("Login"):
         if username == VALID_USERNAME and password == VALID_PASSWORD:
             st.session_state["authenticated"] = True
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Invalid Username or Password")
 
