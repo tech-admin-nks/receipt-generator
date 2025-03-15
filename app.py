@@ -6,9 +6,10 @@ from reportlab.lib.utils import ImageReader
 from io import BytesIO
 import datetime
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import load_dotenv
 import dropbox
+import requests 
 
 # Load environment variables
 load_dotenv()
@@ -16,13 +17,28 @@ load_dotenv()
 # Fetch credentials from environment variables
 VALID_USERNAME = os.getenv("APP_USERNAME")
 VALID_PASSWORD = os.getenv("APP_PASSWORD")
-DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_ACCESS_TOKEN")
+DROPBOX_APP_KEY = os.getenv("DROPBOX_APP_KEY")
+DROPBOX_APP_SECRET = os.getenv("DROPBOX_APP_SECRET")
+DROPBOX_REFRESH_TOKEN = os.getenv("DROPBOX_REFRESH_TOKEN")
+
+
 
 data_file = "receipts.csv"
 
+def get_access_token():
+    """Fetches a new Dropbox access token using the refresh token."""
+    response = requests.post("https://api.dropbox.com/oauth2/token", data={
+        "grant_type": "refresh_token",
+        "refresh_token": DROPBOX_REFRESH_TOKEN,
+        "client_id": DROPBOX_APP_KEY,
+        "client_secret": DROPBOX_APP_SECRET
+    })
+    return response.json().get("access_token")
+
 def upload_to_dropbox(file_bytes, dropbox_path):
     """Uploads a file to Dropbox"""
-    dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+    access_token = get_access_token()
+    dbx = dropbox.Dropbox(access_token)
 
     try:
         dbx.files_upload(file_bytes.getvalue(), dropbox_path, mode=dropbox.files.WriteMode("overwrite"))
@@ -151,13 +167,7 @@ def main():
     
     receipt_number = datetime.now().strftime("%Y%m%d%H%M") 
     student_name = st.text_input("Student Name", "")
-    # Get current time in UTC
-    utc_now = datetime.utcnow()
-
-    # Add 5 hours 30 minutes to convert UTC → IST
-    ist_now = utc_now + timedelta(hours=5, minutes=30)
-
-    date = ist_now.strftime("%d/%m/%Y %H:%M:%S") #datetime.today().strftime("%d/%m/%Y")
+    date = datetime.today().strftime("%d/%m/%Y")
     amount_paid = st.number_input("Amount Paid", min_value=0.0, value=0.0)
     
     fee_type = st.selectbox("Type of Fees", ["Tuition Fee", "Admission Fee"])
