@@ -170,7 +170,7 @@ def main():
     date = datetime.today().strftime("%d/%m/%Y")
     amount_paid = st.number_input("Amount Paid", min_value=0.0, value=0.0)
     
-    fee_type = st.selectbox("Type of Fees", ["Tuition Fee", "Admission Fee", "Test Series"])
+    fee_type = st.selectbox("Type of Fees", ["Tuition Fee", "Admission Fee"])
     month = ""
     if fee_type == "Tuition Fee":
         month = st.selectbox("Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
