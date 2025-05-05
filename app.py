@@ -76,7 +76,7 @@ def generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, 
     c.setFont("Helvetica-Bold", 12)
     c.drawString(50, height - 120, "FROM")
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 140, "Nucleon Kota Shantiniketan")
+    c.drawString(50, height - 140, "NEETPrep Shantiniketan")
     c.drawString(50, height - 155, "Astha Complex, Sriniketan Rd (near Bolpur High School)")
     c.drawString(50, height - 170, "Bolpur, West Bengal 731204")
     
@@ -113,9 +113,9 @@ def generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, 
     c.drawString(450, height - 300, f"₹ {amount_paid:.2f}")
         
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 370, "Thank you for joining Nucleon Kota.")
+    c.drawString(50, height - 370, "Thank you for joining NEETPrep.")
     c.setFillColorRGB(0, 0, 1)  # Set text color to blue
-    url = "https://www.nucleonkotashantiniketan.in/"
+    url = "https://www.neetprep.com/"
     c.drawString(50, height - 385, url)
     c.linkURL(url, (50, height - 395, 350, height - 380), relative=1)
     c.setFillColorRGB(0, 0, 0)  # Reset color to black for other text
@@ -123,7 +123,7 @@ def generate_receipt(receipt_number, student_name, date, amount_paid, fee_type, 
     
     c.setFont("Helvetica", 70)
     c.setFillAlpha(0.1)
-    c.drawString(130, height / 2, "Nucleon Kota")
+    c.drawString(130, height / 2, "NEETPrep")
 
     # Save PDF in structured folders
     year_month = datetime.now().strftime("%Y/%m")  #datetime.datetime.today().strftime("%Y/%m")
